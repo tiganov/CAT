@@ -1,0 +1,33 @@
+﻿<Window x:Class="CAT_WPF.NonUserDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CAT_WPF"
+        mc:Ignorable="d"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        FontWeight="Light"
+        Title="Suggestion" Height="360" Width="400">
+    <Border Padding="10">
+        <StackPanel>
+            <Label x:Name="TurnText" Content="{Binding Cards,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}" 
+                FontSize="18" Padding="10" HorizontalContentAlignment="Center"  HorizontalAlignment="Center"/>
+            <ListView x:Name="PlayersListView" Height="210" ItemsSource="{Binding PlayersListData}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock FontSize="22" Text="{Binding}" />
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ListView>
+            <Grid Margin="0 10 0 0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Button IsCancel="True" x:Name="CancelButton" FontSize="22" Grid.Column="0" Content="Cancel" Margin="0 0 5 0" Click="CancelButton_Click"/>
+                <Button IsDefault="True" x:Name="AcceptButton" FontSize="22" Grid.Column="1" Content="Accept" Margin="5 0 0 0" Click="AcceptButton_Click"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>

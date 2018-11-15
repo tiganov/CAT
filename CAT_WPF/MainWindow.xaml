@@ -5,8 +5,266 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:CAT_WPF"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        
-    </Grid>
+        Title="Clue Assist Tool" Height="768" Width="1024"
+        FontFamily="Segoe UI"
+        FontWeight="Light">
+
+    <Window.Resources>
+        <Style  TargetType="{x:Type ListViewItem}">
+            <Style.Triggers>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="0">
+                    <Setter Property="Background" Value="White"></Setter>
+                </Trigger>
+                <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                    <Setter Property="Background" Value="#f5f5f5"></Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+    </Window.Resources>
+
+
+    <Border Padding="10" MaxHeight="900" MaxWidth="1200" >
+        <TabControl x:Name="TabController" BorderThickness="0" SelectionChanged="TabController_SelectionChanged" >
+            <TabItem Header="Setup" Visibility="Collapsed">
+                <StackPanel>
+                    <Label Content="Welcome to the Clue Asssist Tool" FontSize="36" Background="Black"
+                       Foreground="White" Padding="10">
+                    </Label>
+                    <Border Padding="0 10 0 0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="3*" />
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0" Margin="0 0 10 0">
+                                <TextBlock Text="Players" FontSize="22" Padding="0 0 0 10" />
+                      
+                                <ListView x:Name="PlayersListView" Height="295" ItemsSource="{Binding PlayersData}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <TextBlock FontSize="18" Text="{Binding}" />
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ListView>
+                                <TextBox x:Name="PlayerInputBox" Margin="0 10 0 0" FontSize="18" KeyDown="PlayerInputBox_KeyDown"/>
+                                <Grid Margin="0 10 0 0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <Button x:Name="AddButton" Content="Add" FontSize="18" Margin="0 0 5 0" Grid.Column="0" Click="AddButton_Click" />
+                                    <Button x:Name="DeleteButton" Content="Delete" FontSize="18" Margin="5 0 0 0" Grid.Column="1" Click="DeleteButton_Click" />
+                                </Grid>
+                                <TextBlock Text="Enter players in order of their turn after yours. Then select the player who goes first." 
+                                           FontSize="14" Padding="0 10 0 0" TextWrapping="WrapWithOverflow"/>
+
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1">
+                                <TextBlock Text="Select your cards" FontWeight="Normal" FontSize="22" Padding="0 0 0 10" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <StackPanel Grid.Column="0" Margin="0 0 5 0">
+                                        <TextBlock Text="Suspects" FontSize="18" Padding="0 0 0 10" />
+                                        <ListView x:Name="SuspectsListView" Height="260" ItemsSource="{Binding SuspectsData}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock FontSize="18" Text="{Binding}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+
+                                        </ListView>
+                                        <TextBlock Text="Use Ctrl + C to select multiple cards" FontSize="14" Padding="0 10 0 0" />
+
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="1" Margin="5 0 5 0">
+                                        <TextBlock Text="Weapons" FontSize="18" Padding="0 0 0 10" />
+                                        <ListView x:Name="WeaponsListView" Height="260" ItemsSource="{Binding WeaponsData}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock FontSize="18" Text="{Binding}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ListView>
+                                    </StackPanel>
+                                    <StackPanel Grid.Column="2" Margin="5 0 0 0">
+                                        <TextBlock Text="Rooms" FontSize="18" Padding="0 0 0 10" />
+                                        <ListView x:Name="RoomsListView" Height="260" ItemsSource="{Binding RoomsData}">
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <TextBlock FontSize="18" Text="{Binding}" />
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ListView>
+                                        <Button x:Name="StartGameButton" Content="Start Game" FontSize="22" Margin="0 30 0 0" Click="StartGameButton_Click"  />
+                                        <TextBlock x:Name="ErrorText" Text="Please enter at least 2 players" FontSize="14" Foreground="DarkRed" Margin="0 10 0 0"/>
+                                    </StackPanel>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                </StackPanel>
+            </TabItem>
+            <TabItem x:Name="OverviewTab" Header="Overview" Visibility="Collapsed">
+                <StackPanel>
+                    <Grid Background="Black">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Content="Game Overview" FontSize="36"
+                       Foreground="White" Padding="10" />
+                        <Label x:Name="TurnText" Grid.Column="1" Content="{Binding BindingTurnName,RelativeSource={RelativeSource Mode=FindAncestor,AncestorType=Window}}" 
+                               FontSize="36" Foreground="White" Padding="10" HorizontalContentAlignment="Right"  HorizontalAlignment="Right"/>
+                    </Grid>
+                   
+                    <Border Padding="0 10 0 0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" Margin="0 0 5 0">
+                                <TextBlock Text="Suspects" FontSize="18" Padding="0 0 0 10" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ListView Grid.Column="1" HorizontalContentAlignment="Stretch" x:Name="SuspectsListViewOverview" 
+                                              Height="260" ItemsSource="{Binding SuspectsData}" BorderThickness="0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock  FontSize="18" Text="{Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ListView>
+                                    <ListBox IsEnabled="false" Grid.Column="0" HorizontalContentAlignment="Stretch" x:Name="SuspectsProbListView" 
+                                             Height="260" ItemsSource="{Binding Path=SuspectsProbData}" BorderThickness="0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ProgressBar Foreground="MediumTurquoise" Height="24" Value="{Binding Path=.}" FlowDirection="RightToLeft" HorizontalContentAlignment="Right"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </StackPanel>
+                            <StackPanel Grid.Column="1" Margin="5 0 5 0">
+                                <TextBlock Text="Weapons" FontSize="18" Padding="0 0 0 10" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ListView Grid.Column="1" HorizontalContentAlignment="Stretch" x:Name="WeaponsListViewOverview" 
+                                              Height="260" ItemsSource="{Binding WeaponsData}" BorderThickness="0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock  FontSize="18" Text="{Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ListView>
+                                    <ListBox IsEnabled="false" Grid.Column="0" HorizontalContentAlignment="Stretch" x:Name="WeaponsProbListView" 
+                                             Height="260" ItemsSource="{Binding WeaponsProbData}" BorderThickness="0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ProgressBar Foreground="MediumTurquoise" Height="24" Value="{Binding Path=.}" FlowDirection="RightToLeft" HorizontalContentAlignment="Right"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                        </StackPanel>
+                            <StackPanel Grid.Column="2" Margin="5 0 0 0">
+                                <TextBlock Text="Rooms" FontSize="18" Padding="0 0 0 10" />
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="2*" />
+                                    </Grid.ColumnDefinitions>
+                                    <ListView Grid.Column="1" HorizontalContentAlignment="Stretch" x:Name="RoomsListViewOverview" 
+                                              Height="260" ItemsSource="{Binding RoomsData}" BorderThickness="0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock  FontSize="18" Text="{Binding}" />
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ListView>
+                                    <ListBox IsEnabled="false" Grid.Column="0" HorizontalContentAlignment="Stretch" x:Name="RoomsProbListView" 
+                                             Height="260" ItemsSource="{Binding RoomsProbData}" BorderThickness="0">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <ProgressBar Foreground="MediumTurquoise" Height="24" Value="{Binding Path=.}" FlowDirection="RightToLeft" HorizontalContentAlignment="Right"/>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ListBox>
+                                </Grid>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    <Grid Margin="0 10 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Text="Game Log" FontSize="22" />
+                        <TextBlock Grid.Column="1" Text="Select cards to make a suggestion about them." 
+                                   FontSize="14" HorizontalAlignment="Right" Padding="0 0 10 0"/>
+                    </Grid>
+                    
+                    <Grid Margin="0 0 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="5*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0">
+                            <TabControl x:Name="LogTabControl" Margin="0 10 0 -2" BorderThickness="0" SelectionChanged="LogTabControl_SelectionChanged">
+
+                                <TabItem Header="All" MinWidth="70" FontSize="14"/>
+                            </TabControl>
+                            <ListView x:Name="LogListView" Height="200" ItemsSource="{Binding LogData}" SelectionChanged="LogListView_SelectionChanged" AlternationCount="2">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock FontSize="16" Text="{Binding}"/>
+                                    </DataTemplate>
+                                    
+                                </ItemsControl.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Margin="10 35 0 0">
+                            <TextBlock Text="Filters" FontSize="22" Padding="0 0 0 10" />
+                            <ToggleButton x:Name="Filter1ToggleButton" Content="Significant" FontSize="18" VerticalContentAlignment="Center" Margin="0 0 0 0" Click="Filter1ToggleButton_Click"/>
+                            <ToggleButton x:Name="Filter2ToggleButton" Content="Showed" FontSize="18" VerticalContentAlignment="Center" Margin="0 10 0 0" Click="Filter2ToggleButton_Click"/>
+                            <ToggleButton x:Name="Filter3ToggleButton" Content="Suggested" FontSize="18" VerticalContentAlignment="Center" Margin="0 10 0 0" Click="Filter3ToggleButton_Click"/>
+                        </StackPanel>
+                    </Grid>
+                 
+                    
+                    <Grid Margin="0 10 0 0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Button Grid.Column="0" x:Name="NewGameButton" Content="New Game" FontSize="22" Margin="0 0 5 0" Click="NewGameButton_Click"/>
+                        <Button Grid.Column="1" x:Name="UndoLastTurnButton" Content="Undo Last Turn" FontSize="22" Margin="5 0 5 0"/>
+                        <Button Grid.Column="3" x:Name="SuggestButton" Content="Suggest" FontSize="22" Margin="5 0 5 0" Click="SuggestButton_Click"/>
+                        <Button Grid.Column="4" x:Name="NextTurnButton" Content="Next Turn" FontSize="22" Margin="5 0 0 0" Click="NextTurnButton_Click"/>
+                    </Grid>
+                </StackPanel>
+            </TabItem>
+            
+        </TabControl>
+    </Border>
+    
+
+
 </Window>
