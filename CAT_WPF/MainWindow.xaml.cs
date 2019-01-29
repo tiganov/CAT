@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using CAT_WPF.static_classes;
 
 namespace CAT_WPF
 {
@@ -35,44 +36,6 @@ namespace CAT_WPF
 
         // GameState holds all data
 
-        private void StartGame_GUIBinding()
-        {
-            LogEntry("Game started.");
-        }
-
-        private void SetPlayerCards_GUIBinding()
-        {
-            LogEntry("You were given " + CardEnumToString(GetCardsSetup()) + ".");
-        }
-
-        private void SetPlayers_GUIBinding(ObservableCollection<string> _Players)
-        {
-
-        }
-
-        private void UserSuggestion_GUIBinding(int _PlayerIndex, CardEnum _Card)
-        {
-
-        }
-
-        private void NonUserSuggestion_GUIBinding(int _SuggestingPlayerIndex, int _ShowingPlayerIndex, Collection<CardEnum> _Cards)
-        {
-
-        }
-
-        private void NexTurn_GUIBinding()
-        {
-
-        }
-
-        private void UndoLastTurn_GUIBinding()
-        {
-
-        }
-
-        private void NewGame_GUIBinding()
-        {
-
-        }
+       
     }
 }

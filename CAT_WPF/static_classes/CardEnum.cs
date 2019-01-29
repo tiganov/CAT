@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CAT_WPF
+namespace CAT_WPF.static_classes
 {
     public enum CardEnum
     {

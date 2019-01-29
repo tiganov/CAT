@@ -86,16 +86,18 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="GameData.cs" />
+    <Compile Include="General.cs" />
     <Compile Include="GUI.cs" />
+    <Compile Include="PlayerData.cs" />
+    <Compile Include="SetupPage.cs" />
+    <Compile Include="static_classes\CardLists.cs" />
     <Compile Include="UserDialog.xaml.cs">
       <DependentUpon>UserDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="NonUserDialog.xaml.cs">
       <DependentUpon>NonUserDialog.xaml</DependentUpon>
     </Compile>
-    <Compile Include="static_classes\RoomsList.cs" />
-    <Compile Include="static_classes\WeaponsList.cs" />
-    <Compile Include="static_classes\SuspectsList.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

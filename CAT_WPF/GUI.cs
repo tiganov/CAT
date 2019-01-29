@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using CAT_WPF.static_classes;
 
 namespace CAT_WPF
 {
@@ -16,29 +17,19 @@ namespace CAT_WPF
 
     public partial class MainWindow : Window, INotifyPropertyChanged
     {
+
+        // MAIN GAME STATE!
+        public GameData GameState;
+
         // <NEW>
         public ObservableCollection<int> SuspectsProbData { get; set; }
         public ObservableCollection<int> WeaponsProbData { get; set; }
         public ObservableCollection<int> RoomsProbData { get; set; }
-        // </NEW >
-
-        // observable data for setup and overview lists (might change later
-        // for observable since need to bind dictionary to it)
-        public ObservableCollection<string> SuspectsData { get; set; }
-        public ObservableCollection<string> WeaponsData { get; set; }
-        public ObservableCollection<string> RoomsData { get; set; }
-
-        // observable collection for playersdata, use this for any access to players
-        public ObservableCollection<string> PlayersData { get; set; }
 
         // observable for displaying the log, changes depending on filters, tab
         public ObservableCollection<string> LogData { get; set; }
 
-        // actual log data
-        private Collection<string> log;
-
         // turn index representing the current turn, index is relative to PlayersData
-        public int turnIndex = 0;
 
         // ---- Binding for turn text block ---- // 
         private string _bindingTurnName;
@@ -64,12 +55,11 @@ namespace CAT_WPF
         {
             InitializeComponent();
 
+            GameState = new GameData();
+
             // Init data
-            SuspectsData = new ObservableCollection<string>(SuspectsList.suspects);
-            WeaponsData = new ObservableCollection<string>(WeaponsList.weapons);
-            RoomsData = new ObservableCollection<string>(RoomsList.rooms);
-            PlayersData = new ObservableCollection<string> { "Me" };
-            log = new Collection<string>();
+           
+            
             LogData = new ObservableCollection<string>();
 
             // <NEW>
@@ -83,144 +73,19 @@ namespace CAT_WPF
             SuspectsListViewOverview.SelectionMode = 0;
             WeaponsListViewOverview.SelectionMode = 0;
             RoomsListViewOverview.SelectionMode = 0;
-            PlayersListView.SelectionMode = 0;
+            
 
             // set data context
             DataContext = this;
 
             // do rest of initialization
-            StartGame();
+            RestartGame();
 
-        }
-
-
-        // run at beginning of game and each time the game restarts
-        private void StartGame()
-        {
-            InitOverviewLists();
-
-            // reset filter toggle buttons
-            Filter1ToggleButton.IsChecked = false;
-            Filter2ToggleButton.IsChecked = false;
-            Filter3ToggleButton.IsChecked = false;
-
-            // reset input text
-            PlayerInputBox.Text = "";
-
-            // clear players, log display, actual log, and log tabcontrol tabs 
-            PlayersData.Clear();
-            LogData.Clear();
-            log.Clear();
-            LogTabControl.Items.Clear();
-
-            // add "Me" to players 
-            PlayersData.Add("Me");
-
-            // add "All" tab to tabcontrol
-            TabItem newitem = new TabItem
-            {
-                Header = "All",
-                FontSize = 14,
-                MinWidth = 70
-            };
-            LogTabControl.Items.Add(newitem);
-
-            // reset selected for the lists to first element
-            SuspectsListView.SelectedIndex = 0;
-            WeaponsListView.SelectedIndex = 0;
-            RoomsListView.SelectedIndex = 0;
-            PlayersListView.SelectedIndex = 0;
-
-            SuspectsListViewOverview.SelectedIndex = 0;
-            WeaponsListViewOverview.SelectedIndex = 0;
-            RoomsListViewOverview.SelectedIndex = 0;
-
-            // hide error text
-            ErrorText.Visibility = Visibility.Hidden;
-
-        }
-
-        public void InitOverviewLists()
-        {
-            SuspectsProbData.Clear();
-            WeaponsProbData.Clear();
-            RoomsProbData.Clear();
-
-            foreach (string str in SuspectsList.suspects)
-            {
-                SuspectsProbData.Add(100);
-            }
-            foreach (string str in WeaponsList.weapons)
-            {
-                WeaponsProbData.Add(100);
-            }
-            foreach (string str in RoomsList.rooms)
-            {
-                RoomsProbData.Add(100);
-            }
         }
 
         /// --------------- SETUP SCREEN METHODS ----------------
 
-        private void StartGameButton_Click(object sender, RoutedEventArgs e)
-        {
-            // if there is only one player, i.e. "Me", complain (so display error text)
-            if (PlayersData.Count == 1)
-            {
-                ErrorText.Visibility = Visibility.Visible;
-            }
-            else // otherwise do game startup and prep for overview screen
-            {
-                // get the selected player who goes first
-                turnIndex = PlayersListView.SelectedIndex;
-                // update turn text 
-                UpdateTurnText();
-                // by default select the first tab "All" of the log
-                TabController.SelectedIndex = 1;
-                // for each player string in players data, add it as a tab to log tabs
-                foreach (string player in PlayersData)
-                {
-                    TabItem newitem = new TabItem
-                    {
-                        Header = player,
-                        FontSize = 14,
-                        MinWidth = 70
-                    };
-                    LogTabControl.Items.Add(newitem);
-                }
-                // iff the log is empty (for whatever reason), add the game has started
-                if (log.Count == 0)
-                {
-                    LogEntry("Game Started.");
-                    LogEntry("You were given " + CardEnumToString(GetCardsSetup()) + ".");
-                }
-
-                foreach (object o in SuspectsListView.SelectedItems)
-                {
-                    int index = SuspectsListView.Items.IndexOf(o);
-                    SuspectsProbData[index] = 0;
-                }
-                foreach (object o in WeaponsListView.SelectedItems)
-                {
-                    int index = WeaponsListView.Items.IndexOf(o);
-                    WeaponsProbData[index] = 0;
-                }
-                foreach (object o in RoomsListView.SelectedItems)
-                {
-                    int index = RoomsListView.Items.IndexOf(o);
-                    RoomsProbData[index] = 0;
-                }
-
-
-                /* DEBUG
-                LogEntry("John");
-                LogEntry("Bob");
-                LogEntry("Henry");
-                LogEntry("Frank");
-                LogEntry("significant");
-                */
-            }
-        }
+        
 
         private void PlayerInputBox_KeyDown(object sender, KeyEventArgs e)
         {
@@ -312,20 +177,12 @@ namespace CAT_WPF
         // log given message with date to data, then call UpdateLog() to visually update
         private void LogEntry(string message)
         {
-            // add to log : "[HH:mm] <message>"
-            string str = "[" + DateTime.Now.ToString("hh:mm") + "] " + message;
-            log.Add(str);
+            GameState.LogEntry(message);
             UpdateLog();
         }
 
         private void UpdateLog()
         {
-            // if the log is empty, add game started (have to do this just because how UpdateLog() is called)
-            if (log.Count == 0)
-            {
-                LogEntry("Game Started.");
-                LogEntry("You were given " + CardEnumToString(GetCardsSetup()) + ".");
-            }
 
             // clear the previous visual data
             LogData.Clear();
@@ -336,13 +193,13 @@ namespace CAT_WPF
             // if the selected tab is undefined, just return
             if (selectedTabIndex == -1) { return; }
 
-            LogData.Add(log[0]); // add "Game Started."
+            LogData.Add(GameState.GetLogEntry(0)); // add "Game Started."
 
             // for each index of the log, except for the first, see if we want to display it
-            for (int i = 1; i < log.Count(); ++i)
+            for (int i = 1; i < GameState.GetLogSize(); ++i)
             {
                 // get the string we are considering -> s
-                string s = log[i];
+                string s = GameState.GetLogEntry(i);
 
                 // if "Me" is selected, check if the entry pertains to user, continue if doesn't
                 if (selectedTabIndex == 1)
@@ -449,13 +306,13 @@ namespace CAT_WPF
             }
             foreach (object o in WeaponsListView.SelectedItems)
             {
-                int index = WeaponsListView.Items.IndexOf(o) + SuspectsList.suspects.Length;
+                int index = WeaponsListView.Items.IndexOf(o) + CardLists.suspects.Length;
                 CardEnum card = (CardEnum)index;
                 cards.Add(card);
             }
             foreach (object o in RoomsListView.SelectedItems)
             {
-                int index = RoomsListView.Items.IndexOf(o) + SuspectsList.suspects.Length + WeaponsList.weapons.Length;
+                int index = RoomsListView.Items.IndexOf(o) + CardLists.suspects.Length + CardLists.weapons.Length;
                 CardEnum card = (CardEnum)index;
                 cards.Add(card);
             }
@@ -474,13 +331,13 @@ namespace CAT_WPF
             }
             foreach (object o in WeaponsListViewOverview.SelectedItems)
             {
-                int index = WeaponsListViewOverview.Items.IndexOf(o) + SuspectsList.suspects.Length;
+                int index = WeaponsListViewOverview.Items.IndexOf(o) + CardLists.suspects.Length;
                 CardEnum card = (CardEnum)index;
                 cards.Add(card);
             }
             foreach (object o in RoomsListViewOverview.SelectedItems)
             {
-                int index = RoomsListViewOverview.Items.IndexOf(o) + SuspectsList.suspects.Length + WeaponsList.weapons.Length;
+                int index = RoomsListViewOverview.Items.IndexOf(o) + CardLists.suspects.Length + CardLists.weapons.Length;
                 CardEnum card = (CardEnum)index;
                 cards.Add(card);
             }
@@ -520,7 +377,7 @@ namespace CAT_WPF
 
         }
 
-        /// ======================== WIP =================================
+        /// ======================== DIALOGS =================================
 
         public void NonUserDialogAccept_AcceptClick(int selected)
         {
